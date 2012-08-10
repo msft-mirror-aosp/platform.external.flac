@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\include;..\..\include;&quot;$(ProjectDir)..\..\..\libogg-1.2.0\include&quot;"
+				AdditionalIncludeDirectories=".\include;..\..\include;&quot;$(ProjectDir)..\..\..\libogg\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;FLAC__HAS_OGG;FLAC__CPU_IA32;VERSION=\&quot;1.2.0\&quot;;FLAC__NO_DLL;DEBUG;FLAC__OVERFLOW_DETECT"
 				StringPooling="false"
 				RuntimeLibrary="3"
@@ -101,7 +101,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="0"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories=".\include;..\..\include;&quot;$(ProjectDir)..\..\..\libogg-1.2.0\include&quot;"
+				AdditionalIncludeDirectories=".\include;..\..\include;&quot;$(ProjectDir)..\..\..\libogg\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;FLAC__HAS_OGG;FLAC__CPU_IA32;VERSION=\&quot;1.2.0\&quot;;FLAC__NO_DLL"
 				RuntimeLibrary="2"
 				FloatingPointModel="0"
@@ -145,11 +145,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\include\protected\all.h"
+				RelativePath=".\include\private\all.h"
 				>
 			</File>
 			<File
-				RelativePath=".\include\private\all.h"
+				RelativePath=".\include\protected\all.h"
 				>
 			</File>
 			<File
