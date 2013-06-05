@@ -369,6 +369,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D799E1280F45F21900EE750D /* Build configuration list for PBXNativeTarget "Build PPC" */;
 			buildPhases = (
+				FA3B3042175FCE6200800CF6 /* Copy config.h */,
 				D799E11D0F45F21400EE750D /* Headers */,
 				D799E11E0F45F21400EE750D /* Sources */,
 				D799E11F0F45F21400EE750D /* Frameworks */,
@@ -386,6 +387,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D799E4DD0F45F29D00EE750D /* Build configuration list for PBXNativeTarget "Build i386" */;
 			buildPhases = (
+				FA3B306A175FCFF500800CF6 /* Copy config.h */,
 				D799E1290F45F22B00EE750D /* Headers */,
 				D799E12A0F45F22B00EE750D /* Sources */,
 				D799E12B0F45F22B00EE750D /* Frameworks */,
@@ -441,6 +443,38 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "lipo -create $CONFIGURATION_BUILD_DIR/libFLACPPC.a $CONFIGURATION_BUILD_DIR/libFLACi386.a -output $CONFIGURATION_BUILD_DIR/libFLAC.a";
+		};
+		FA3B3042175FCE6200800CF6 /* Copy config.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../../config_mac.h",
+			);
+			name = "Copy config.h";
+			outputPaths = (
+				"$(SRCROOT)/../../config.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $PROJECT_DIR/../../\ncp config_mac.h config.h\n";
+		};
+		FA3B306A175FCFF500800CF6 /* Copy config.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../../config_mac.h",
+			);
+			name = "Copy config.h";
+			outputPaths = (
+				"$(SRCROOT)/../../config.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $PROJECT_DIR/../../\ncp config_mac.h config.h\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
