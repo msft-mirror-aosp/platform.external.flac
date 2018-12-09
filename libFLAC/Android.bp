@@ -52,9 +52,11 @@ cc_library_static {
 
     sanitize: {
         integer_overflow: true,
+        misc_undefined: ["bounds"],
         cfi: true,
         diag: {
             integer_overflow: true,
+            misc_undefined: ["bounds"],
             cfi: true,
         },
         blacklist: "libFLAC_blacklist.txt",
