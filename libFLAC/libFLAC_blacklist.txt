@@ -9,3 +9,6 @@ src:*/libFLAC/md5.c
 src:*/libFLAC/bitmath.c
 src:*/libFLAC/bitreader.c
 src:*/libFLAC/bitwriter.c
+
+# Performance related
+fun:FLAC__lpc_restore_signal_wide
