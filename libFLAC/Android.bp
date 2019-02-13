@@ -55,11 +55,6 @@ cc_library_static {
         misc_undefined: ["bounds"],
         // Enable CFI if this is used as a shared library
         // cfi: true,
-        diag: {
-            integer_overflow: true,
-            misc_undefined: ["bounds"],
-            no_recover: ["bounds", "integer"],
-        },
         blacklist: "libFLAC_blacklist.txt",
     },
 }
