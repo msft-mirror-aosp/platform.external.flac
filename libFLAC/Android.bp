@@ -1,7 +1,7 @@
 cc_library_static {
     name: "libFLAC",
     vendor_available: true,
-
+    host_supported: true,
     srcs: [
         "bitmath.c",
         "bitreader.c",
@@ -57,5 +57,11 @@ cc_library_static {
         // Enable CFI if this is used as a shared library
         // cfi: true,
         blacklist: "libFLAC_blacklist.txt",
+    },
+
+    target: {
+        darwin: {
+            enabled: false,
+        },
     },
 }
