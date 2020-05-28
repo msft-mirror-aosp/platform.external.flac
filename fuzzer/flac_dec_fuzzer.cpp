@@ -51,7 +51,7 @@ bool Codec::initDecoder() {
     return false;
   }
   FLAC__stream_decoder_set_metadata_ignore_all(mDecoder);
-
+  FLAC__stream_decoder_set_md5_checking(mDecoder, true);
   // read_callback, write_callback, error_callback and metadata_callback cannot be nullptrs
 
   static auto read_callback = [](const FLAC__StreamDecoder *, FLAC__byte buffer[], size_t *bytes,
