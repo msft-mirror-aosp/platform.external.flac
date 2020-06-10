@@ -2,12 +2,26 @@ cc_library_headers {
     name: "libFLAC-config",
     export_include_dirs: ["."],
     vendor_available: true,
+    host_supported: true,
+    target: {
+        darwin: {
+            enabled: false,
+        },
+    },
+    min_sdk_version: "29",
 }
 
 cc_library_headers {
     name: "libFLAC-headers",
     export_include_dirs: ["include"],
     vendor_available: true,
+    host_supported: true,
+    target: {
+        darwin: {
+            enabled: false,
+        },
+    },
+    min_sdk_version: "29",
 }
 
 subdirs = ["libFLAC"]
