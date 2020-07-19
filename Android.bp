@@ -24,4 +24,4 @@ cc_library_headers {
     min_sdk_version: "29",
 }
 
-subdirs = ["libFLAC"]
+subdirs = ["src/libFLAC"]
