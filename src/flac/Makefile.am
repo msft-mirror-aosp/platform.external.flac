@@ -21,6 +21,7 @@ bin_PROGRAMS = flac
 AM_CFLAGS = @OGG_CFLAGS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(srcdir)/include -I$(top_srcdir)/include
 EXTRA_DIST = \
+	CMakeLists.txt \
 	Makefile.lite \
 	Makefile.lite.iffscan \
 	flac.vcproj \
@@ -60,7 +61,7 @@ flac_LDADD = \
 	$(top_builddir)/src/share/replaygain_synthesis/libreplaygain_synthesis.la \
 	$(top_builddir)/src/libFLAC/libFLAC.la \
 	$(win_utf8_lib) \
-	@LIBICONV@ \
+	@LTLIBICONV@ \
 	-lm
 
 CLEANFILES = flac.exe
