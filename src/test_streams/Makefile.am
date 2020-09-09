@@ -17,13 +17,14 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 EXTRA_DIST = \
+	CMakeLists.txt \
 	Makefile.lite \
 	test_streams.vcproj \
 	test_streams.vcxproj \
 	test_streams.vcxproj.filters
 
 AM_CPPFLAGS = -I$(top_builddir) -I$(srcdir)/include -I$(top_srcdir)/include
-noinst_PROGRAMS = test_streams
+check_PROGRAMS = test_streams
 test_streams_SOURCES = \
 	main.c
 
