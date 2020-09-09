@@ -21,6 +21,7 @@ bin_PROGRAMS = metaflac
 AM_CFLAGS = @OGG_CFLAGS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(srcdir)/include -I$(top_srcdir)/include
 EXTRA_DIST = \
+	CMakeLists.txt \
 	Makefile.lite \
 	metaflac.vcproj \
 	metaflac.vcxproj \
@@ -55,6 +56,6 @@ metaflac_LDADD = \
 	$(top_builddir)/src/share/utf8/libutf8.la \
 	$(top_builddir)/src/libFLAC/libFLAC.la \
 	$(win_utf8_lib) \
-	@LIBICONV@
+	@LTLIBICONV@
 
 CLEANFILES = metaflac.exe
