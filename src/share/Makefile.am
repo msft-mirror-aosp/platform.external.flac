@@ -23,22 +23,27 @@ AM_CPPFLAGS = -I$(top_builddir) -I$(srcdir)/include -I$(top_srcdir)/include
 EXTRA_DIST = \
 	Makefile.lite \
 	README \
+	getopt/CMakeLists.txt \
 	getopt/Makefile.lite \
 	getopt/getopt_static.vcproj \
 	getopt/getopt_static.vcxproj \
 	getopt/getopt_static.vcxproj.filters \
+	grabbag/CMakeLists.txt \
 	grabbag/Makefile.lite \
 	grabbag/grabbag_static.vcproj \
 	grabbag/grabbag_static.vcxproj \
 	grabbag/grabbag_static.vcxproj.filters \
+	replaygain_analysis/CMakeLists.txt \
 	replaygain_analysis/Makefile.lite \
 	replaygain_analysis/replaygain_analysis_static.vcproj \
 	replaygain_analysis/replaygain_analysis_static.vcxproj \
 	replaygain_analysis/replaygain_analysis_static.vcxproj.filters \
+	replaygain_synthesis/CMakeLists.txt \
 	replaygain_synthesis/Makefile.lite \
 	replaygain_synthesis/replaygain_synthesis_static.vcproj \
 	replaygain_synthesis/replaygain_synthesis_static.vcxproj \
 	replaygain_synthesis/replaygain_synthesis_static.vcxproj.filters \
+	utf8/CMakeLists.txt \
 	utf8/Makefile.lite \
 	utf8/charmaps.h \
 	utf8/makemap.c \
@@ -92,9 +97,3 @@ replaygain_analysis_libreplaygain_analysis_la_SOURCES = replaygain_analysis/repl
 
 replaygain_synthesis_libreplaygain_synthesis_la_CFLAGS = -I $(top_srcdir)/src/share/replaygain_synthesis/include
 replaygain_synthesis_libreplaygain_synthesis_la_SOURCES = replaygain_synthesis/replaygain_synthesis.c
-
-debug:
-	$(MAKE) all CFLAGS="@DEBUG@"
-
-profile:
-	$(MAKE) all CFLAGS="@PROFILE@"
