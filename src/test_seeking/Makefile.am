@@ -17,6 +17,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 EXTRA_DIST = \
+	CMakeLists.txt \
 	Makefile.lite \
 	test_seeking.vcproj \
 	test_seeking.vcxproj \
@@ -26,7 +27,7 @@ AM_CFLAGS = @OGG_CFLAGS@
 
 AM_CPPFLAGS = -I$(top_builddir) -I$(srcdir)/include -I$(top_srcdir)/include
 
-noinst_PROGRAMS = test_seeking
+check_PROGRAMS = test_seeking
 test_seeking_LDADD = \
 	$(top_builddir)/src/libFLAC/libFLAC.la
 
