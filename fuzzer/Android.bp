@@ -37,3 +37,28 @@ cc_fuzz {
         componentid: 155276,
     },
 }
+
+cc_fuzz {
+    name: "flac_enc_fuzzer",
+    host_supported: true,
+
+    header_libs: [
+        "libaudioutils_headers",
+    ],
+
+    static_libs: [
+        "libFLAC",
+        "libaudioutils",
+    ],
+
+    srcs: [
+        "flac_enc_fuzzer.cpp",
+    ],
+
+    fuzz_config: {
+        cc: [
+            "android-media-fuzzing-reports@google.com",
+        ],
+        componentid: 155276,
+    },
+}

@@ -3,6 +3,8 @@
 fun:FLAC__lpc_compute_autocorrelation
 # libFLAC/stream_encoder.c:3982: 4294967292 + 128 cannot be represented in type 'unsigned int'
 fun:precompute_partition_info_sums_
+# libFLAC/lpc.c:1030:18: -1932902714 + -1376235516 cannot be represented in type 'int'
+fun:FLAC__lpc_restore_signal
 
 src:*/libFLAC/crc.c
 src:*/libFLAC/md5.c
