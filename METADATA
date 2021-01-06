@@ -5,11 +5,11 @@ third_party {
     type: GIT
     value: "https://github.com/xiph/flac.git"
   }
-  version: "ce6dd6b5732e319ef60716d9cc9af6a836a4011a"
+  version: "bfd4f13f3eb1f4d4f9f723e343f63eceedb267ba"
   license_type: RESTRICTED
   last_upgrade_date {
     year: 2020
-    month: 9
-    day: 3
+    month: 12
+    day: 17
   }
 }
