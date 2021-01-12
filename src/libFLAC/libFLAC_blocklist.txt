@@ -5,6 +5,10 @@ fun:FLAC__lpc_compute_autocorrelation
 fun:precompute_partition_info_sums_
 # libFLAC/lpc.c:1030:18: -1932902714 + -1376235516 cannot be represented in type 'int'
 fun:FLAC__lpc_restore_signal
+# libFLAC/fixed.c:390:44: 6 * -358419632 cannot be represented in type 'int'
+# libFLAC/fixed.c:378:27: -1023409921 + -1145670695 cannot be represented in type 'int'
+fun:FLAC__fixed_restore_signal
+fun:FLAC__fixed_compute_residual
 
 src:*/libFLAC/crc.c
 src:*/libFLAC/md5.c
