@@ -1,3 +1,6 @@
+# *** THIS PACKAGE HAS SPECIAL LICENSING CONDITIONS.  PLEASE
+#     CONSULT THE OWNERS AND opensource-licensing@google.com BEFORE
+#     DEPENDING ON IT IN YOUR PROJECT. ***
 name: "flac"
 description: "Android fork of the flac library."
 third_party {
@@ -5,11 +8,15 @@ third_party {
     type: GIT
     value: "https://github.com/xiph/flac.git"
   }
-  version: "ce6dd6b5732e319ef60716d9cc9af6a836a4011a"
-  license_type: RESTRICTED
+  version: "bfd4f13f3eb1f4d4f9f723e343f63eceedb267ba"
+  # Would be RESTRICTED save for GFDL in:
+  #   README
+  #   COPYING.FDL
+  #   doc/html/flac.css
+  license_type: BY_EXCEPTION_ONLY
   last_upgrade_date {
     year: 2020
-    month: 9
-    day: 3
+    month: 12
+    day: 17
   }
 }
