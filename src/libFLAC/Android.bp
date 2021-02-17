@@ -1,3 +1,13 @@
+package {
+    // See: http://go/android-license-faq
+    // A large-scale-change added 'default_applicable_licenses' to import
+    // all of the 'license_kinds' from "external_flac_license"
+    // to get the below license kinds:
+    //   SPDX-license-identifier-BSD
+    //   legacy_unencumbered
+    default_applicable_licenses: ["external_flac_license"],
+}
+
 cc_library_static {
     name: "libFLAC",
     vendor_available: true,
