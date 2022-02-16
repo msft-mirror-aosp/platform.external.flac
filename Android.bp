@@ -59,13 +59,6 @@ cc_library_headers {
         },
     },
     min_sdk_version: "29",
-    apex_available: [
-        "//apex_available:platform",
-        "com.android.media",
-        "com.android.media.swcodec",
-        "test_com.android.media.swcodec",
-    ],
-
 }
 
 cc_library_headers {
@@ -79,13 +72,6 @@ cc_library_headers {
         },
     },
     min_sdk_version: "29",
-    apex_available: [
-        "//apex_available:platform",
-        "com.android.media",
-        "com.android.media.swcodec",
-        "test_com.android.media.swcodec",
-    ],
-
 }
 
 subdirs = ["src/libFLAC"]
