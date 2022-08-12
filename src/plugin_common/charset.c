@@ -1,10 +1,10 @@
 /* plugin_common - Routines common to several plugins
  * Copyright (C) 2002-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2011-2022  Xiph.Org Foundation
  *
  * Only slightly modified charset.c from:
  *  EasyTAG - Tag editor for MP3 and OGG files
- *  Copyright (C) 1999-2001  Håvard Kvålen <havardk@xmms.org>
+ *  Copyright (C) 1999-2001  HÃ¥vard KvÃ¥len <havardk@xmms.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
