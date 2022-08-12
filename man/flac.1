@@ -3,7 +3,7 @@
 .\" <http://shell.ipoline.com/~elmert/comp/docbook2X/> 
 .\" Please send any bug reports, improvements, comments, patches, 
 .\" etc. to Steve Cheng <steve@ggi-project.org>.
-.TH "FLAC" "1" "2013/09/18" "" ""
+.TH "FLAC" "1" "2021/08/31" "" ""
 
 .SH NAME
 flac \- Free Lossless Audio Codec
@@ -73,6 +73,9 @@ Output files have their timestamps/permissions set to match those of their input
 .TP
 \fB--keep-foreign-metadata \fR
 If encoding, save WAVE, RF64, or AIFF non-audio chunks in FLAC metadata.  If decoding, restore any saved non-audio chunks from FLAC metadata when writing the decoded file.  Foreign metadata cannot be transcoded, e.g. WAVE chunks saved in a FLAC file cannot be restored when decoding to AIFF.  Input and output must be regular files (not stdin or stdout).
+.TP
+\fB--keep-foreign-metadata-if-present \fR
+Like --keep-foreign-metadata, but without throwing an error if foreign metadata cannot be found or restored, instead printing a warning.
 .TP
 \fB--skip={\fI#\fB|\fImm:ss.ss\fB}\fR
 Skip over the first number of samples of the input.  This works for both encoding and decoding, but not testing.  The alternative form mm:ss.ss can be used to specify minutes, seconds, and fractions of a second.
@@ -230,7 +233,7 @@ Add a FLAC tag.  The comment must adhere to the Vorbis comment spec; i.e. the FI
 Like --tag, except FILENAME is a file whose contents will be read verbatim to set the tag value.  The contents will be converted to UTF-8 from the local charset.  This can be used to store a cuesheet in a tag (e.g.  --tag-from-file="CUESHEET=image.cue").  Do not try to store binary data in tag fields!  Use APPLICATION blocks for that.
 .TP
 \fB-b \fI#\fB, --blocksize=\fI#\fB\fR
-Specify the block size in samples.  Subset streams must use one of 192, 576, 1152, 2304, 4608, 256, 512, 1024, 2048, 4096 (and 8192 or 16384 if the sample rate is >48kHz).
+Specify the blocksize in samples. The default is 1152 for -l 0, else 4096. For subset streams this must be <= 4608 if the samplerate <= 48kHz, for subset streams with higher samplerates it must be <= 16384.
 .TP
 \fB-m, --mid-side\fR
 Try mid-side coding for each frame (stereo input only)
