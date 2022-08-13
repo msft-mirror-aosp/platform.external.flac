@@ -1,6 +1,6 @@
 /* libFLAC - Free Lossless Audio Codec library
  * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2011-2022  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1124,7 +1124,7 @@ FLAC_API FLAC__bool FLAC__metadata_object_seektable_template_append_spaced_point
 		if (num > 32768) {
 			/* Set the bound and recalculate samples accordingly. */
 			num = 32768;
-			samples = total_samples / num;
+			samples = (uint32_t)(total_samples / num);
 		}
 
 		i = seek_table->num_points;
