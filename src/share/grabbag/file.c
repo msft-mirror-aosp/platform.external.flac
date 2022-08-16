@@ -1,6 +1,6 @@
 /* grabbag - Convenience lib for various routines common to several tools
  * Copyright (C) 2002-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2011-2022  Xiph.Org Foundation
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -54,7 +54,7 @@ void grabbag__file_copy_metadata(const char *srcpath, const char *destpath)
 	struct flac_stat_s srcstat;
 
 	if(0 == flac_stat(srcpath, &srcstat)) {
-#if defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L)
+#if defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L) && !defined(_WIN32)
 		struct timespec srctime[2] = {};
 		srctime[0].tv_sec = srcstat.st_atime;
 		srctime[1].tv_sec = srcstat.st_mtime;
@@ -84,8 +84,10 @@ const char *grabbag__file_get_basename(const char *srcpath)
 
 	p = strrchr(srcpath, '/');
 	if(0 == p) {
+#if defined _WIN32 && !defined __CYGWIN__
 		p = strrchr(srcpath, '\\');
 		if(0 == p)
+#endif
 			return srcpath;
 	}
 	return ++p;
