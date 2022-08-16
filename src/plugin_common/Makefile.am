@@ -1,6 +1,6 @@
 #  plugin_common - Routines common to several plugins
 #  Copyright (C) 2002-2009  Josh Coalson
-#  Copyright (C) 2011-2016  Xiph.Org Foundation
+#  Copyright (C) 2011-2022  Xiph.Org Foundation
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -36,5 +36,4 @@ libplugin_common_la_SOURCES = \
 
 EXTRA_DIST = \
 	CMakeLists.txt \
-	Makefile.lite \
 	README
