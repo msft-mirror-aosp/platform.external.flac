@@ -1,6 +1,6 @@
 #  flac - Command-line FLAC encoder/decoder
 #  Copyright (C) 2002-2009  Josh Coalson
-#  Copyright (C) 2011-2016  Xiph.Org Foundation
+#  Copyright (C) 2011-2022  Xiph.Org Foundation
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ endif
 doc_DATA = \
 	FLAC.tag
 
-EXTRA_DIST = Doxyfile.in Makefile.lite doxygen.footer.html doxygen.header.html \
+EXTRA_DIST = Doxyfile.in doxygen.footer.html doxygen.header.html \
 	isoflac.txt $(doc_DATA) CMakeLists.txt
 
 distclean-local:
