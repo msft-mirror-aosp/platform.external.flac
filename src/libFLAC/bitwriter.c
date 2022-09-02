@@ -1,6 +1,6 @@
 /* libFLAC - Free Lossless Audio Codec library
  * Copyright (C) 2000-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2011-2022  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,9 @@
 #include <string.h>
 #include "private/bitwriter.h"
 #include "private/crc.h"
+#include "private/format.h"
 #include "private/macros.h"
+#include "private/stream_encoder.h"
 #include "FLAC/assert.h"
 #include "share/alloc.h"
 #include "share/compat.h"
@@ -115,6 +117,13 @@ FLAC__bool bitwriter_grow_(FLAC__BitWriter *bw, uint32_t bits_to_add)
 	 */
 	if(bw->capacity >= new_capacity)
 		return true;
+
+	if(new_capacity * sizeof(bwword) > (1u << FLAC__STREAM_METADATA_LENGTH_LEN))
+		/* Requested new capacity is larger than the largest possible metadata block,
+		 * which is also larger than the largest sane framesize. That means something
+		 * went very wrong somewhere and previous checks failed.
+		 * To prevent chrashing, give up */
+		return false;
 
 	/* round up capacity increase to the nearest FLAC__BITWRITER_DEFAULT_INCREMENT */
 	if((new_capacity - bw->capacity) % FLAC__BITWRITER_DEFAULT_INCREMENT)
@@ -388,6 +397,15 @@ inline FLAC__bool FLAC__bitwriter_write_raw_uint64(FLAC__BitWriter *bw, FLAC__ui
 	}
 	else
 		return FLAC__bitwriter_write_raw_uint32(bw, (FLAC__uint32)val, bits);
+}
+
+inline FLAC__bool FLAC__bitwriter_write_raw_int64(FLAC__BitWriter *bw, FLAC__int64 val, uint32_t bits)
+{
+	FLAC__uint64 uval = val;
+	/* zero-out unused bits */
+	if(bits < 64)
+		uval &= (~(UINT64_MAX << bits));
+	return FLAC__bitwriter_write_raw_uint64(bw, uval, bits);
 }
 
 inline FLAC__bool FLAC__bitwriter_write_raw_uint32_little_endian(FLAC__BitWriter *bw, FLAC__uint32 val)
@@ -881,5 +899,6 @@ extern FLAC__bool FLAC__bitwriter_write_zeroes(FLAC__BitWriter *bw, uint32_t bit
 extern FLAC__bool FLAC__bitwriter_write_raw_uint32(FLAC__BitWriter *bw, FLAC__uint32 val, uint32_t bits);
 extern FLAC__bool FLAC__bitwriter_write_raw_int32(FLAC__BitWriter *bw, FLAC__int32 val, uint32_t bits);
 extern FLAC__bool FLAC__bitwriter_write_raw_uint64(FLAC__BitWriter *bw, FLAC__uint64 val, uint32_t bits);
+extern FLAC__bool FLAC__bitwriter_write_raw_int64(FLAC__BitWriter *bw, FLAC__int64 val, uint32_t bits);
 extern FLAC__bool FLAC__bitwriter_write_raw_uint32_little_endian(FLAC__BitWriter *bw, FLAC__uint32 val);
 extern FLAC__bool FLAC__bitwriter_write_byte_block(FLAC__BitWriter *bw, const FLAC__byte vals[], uint32_t nvals);
