@@ -1,6 +1,6 @@
 /* libFLAC++ - Free Lossless Audio Codec library
  * Copyright (C) 2002-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2011-2022  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,15 +55,22 @@
  *
  * \{
  */
+ 
+/* This has grown quite complicated. FLAC__NO_DLL is used by MSVC sln
+ * files and CMake, which build either static or shared. autotools can
+ * build static, shared or **both**. Therefore, DLL_EXPORT, which is set
+ * by libtool, must override FLAC__NO_DLL on building shared components
+ */
+#if defined(_WIN32)
 
-#if defined(FLAC__NO_DLL)
+#if defined(FLAC__NO_DLL) && !(defined(DLL_EXPORT))
 #define FLACPP_API
-
-#elif defined(_WIN32)
+#else
 #ifdef FLACPP_API_EXPORTS
 #define	FLACPP_API __declspec(dllexport)
 #else
 #define FLACPP_API __declspec(dllimport)
+#endif
 #endif
 
 #elif defined(FLAC__USE_VISIBILITY_ATTR)
@@ -77,9 +84,9 @@
 /* These \#defines will mirror the libtool-based library version number, see
  * http://www.gnu.org/software/libtool/manual/libtool.html#Libtool-versioning
  */
-#define FLACPP_API_VERSION_CURRENT 9
+#define FLACPP_API_VERSION_CURRENT 10
 #define FLACPP_API_VERSION_REVISION 0
-#define FLACPP_API_VERSION_AGE 3
+#define FLACPP_API_VERSION_AGE 0
 
 /* \} */
 
