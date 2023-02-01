@@ -8,12 +8,12 @@ third_party {
     type: GIT
     value: "https://github.com/xiph/flac.git"
   }
-  version: "bfd4f13f3eb1f4d4f9f723e343f63eceedb267ba"
+  version: "10d7ce268b758b7cf62c3663338f180370a9a415"
   license_note: "Would be RESTRICTED save for GFDL in: README, COPYING.FDL, and doc/html/flac.css"
   license_type: BY_EXCEPTION_ONLY
   last_upgrade_date {
-    year: 2020
-    month: 12
-    day: 17
+    year: 2022
+    month: 7
+    day: 26
   }
 }
