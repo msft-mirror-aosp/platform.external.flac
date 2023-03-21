@@ -43,6 +43,7 @@
 #include "private/bitmath.h"
 #include "private/lpc.h"
 #include "private/macros.h"
+
 #if !defined(NDEBUG) || defined FLAC__OVERFLOW_DETECT || defined FLAC__OVERFLOW_DETECT_VERBOSE
 #include <stdio.h>
 #endif
@@ -78,6 +79,34 @@ void FLAC__lpc_window_data_wide(const FLAC__int64 in[], const FLAC__real window[
 		out[i] = in[i] * window[i];
 }
 
+void FLAC__lpc_window_data_partial(const FLAC__int32 in[], const FLAC__real window[], FLAC__real out[], uint32_t data_len, uint32_t part_size, uint32_t data_shift)
+{
+	uint32_t i, j;
+	if((part_size + data_shift) < data_len){
+		for(i = 0; i < part_size; i++)
+			out[i] = in[data_shift+i] * window[i];
+		i = flac_min(i,data_len - part_size - data_shift);
+		for(j = data_len - part_size; j < data_len; i++, j++)
+			out[i] = in[data_shift+i] * window[j];
+		if(i < data_len)
+			out[i] = 0.0f;
+	}
+}
+
+void FLAC__lpc_window_data_partial_wide(const FLAC__int64 in[], const FLAC__real window[], FLAC__real out[], uint32_t data_len, uint32_t part_size, uint32_t data_shift)
+{
+	uint32_t i, j;
+	if((part_size + data_shift) < data_len){
+		for(i = 0; i < part_size; i++)
+			out[i] = in[data_shift+i] * window[i];
+		i = flac_min(i,data_len - part_size - data_shift);
+		for(j = data_len - part_size; j < data_len; i++, j++)
+			out[i] = in[data_shift+i] * window[j];
+		if(i < data_len)
+			out[i] = 0.0f;
+	}
+}
+
 void FLAC__lpc_compute_autocorrelation(const FLAC__real data[], uint32_t data_len, uint32_t lag, double autoc[])
 {
 	/* a readable, but slower, version */
@@ -101,30 +130,47 @@ void FLAC__lpc_compute_autocorrelation(const FLAC__real data[], uint32_t data_le
 		autoc[lag] = d;
 	}
 #endif
+	if (data_len < FLAC__MAX_LPC_ORDER || lag > 16) {
+		/*
+		 * this version tends to run faster because of better data locality
+		 * ('data_len' is usually much larger than 'lag')
+		 */
+		double d;
+		uint32_t sample, coeff;
+		const uint32_t limit = data_len - lag;
 
-	/*
-	 * this version tends to run faster because of better data locality
-	 * ('data_len' is usually much larger than 'lag')
-	 */
-	double d;
-	uint32_t sample, coeff;
-	const uint32_t limit = data_len - lag;
+		FLAC__ASSERT(lag > 0);
+		FLAC__ASSERT(lag <= data_len);
 
-	FLAC__ASSERT(lag > 0);
-	FLAC__ASSERT(lag <= data_len);
-
-	for(coeff = 0; coeff < lag; coeff++)
-		autoc[coeff] = 0.0;
-	for(sample = 0; sample <= limit; sample++) {
-		d = data[sample];
 		for(coeff = 0; coeff < lag; coeff++)
-			autoc[coeff] += d * data[sample+coeff];
+			autoc[coeff] = 0.0;
+		for(sample = 0; sample <= limit; sample++) {
+			d = data[sample];
+			for(coeff = 0; coeff < lag; coeff++)
+				autoc[coeff] += d * data[sample+coeff];
+		}
+		for(; sample < data_len; sample++) {
+			d = data[sample];
+			for(coeff = 0; coeff < data_len - sample; coeff++)
+				autoc[coeff] += d * data[sample+coeff];
+		}
 	}
-	for(; sample < data_len; sample++) {
-		d = data[sample];
-		for(coeff = 0; coeff < data_len - sample; coeff++)
-			autoc[coeff] += d * data[sample+coeff];
+	else if(lag <= 8) {
+		#undef MAX_LAG
+		#define MAX_LAG 8
+		#include "deduplication/lpc_compute_autocorrelation_intrin.c"
 	}
+	else if(lag <= 12) {
+		#undef MAX_LAG
+		#define MAX_LAG 12
+		#include "deduplication/lpc_compute_autocorrelation_intrin.c"
+	}
+	else if(lag <= 16) {
+		#undef MAX_LAG
+		#define MAX_LAG 16
+		#include "deduplication/lpc_compute_autocorrelation_intrin.c"
+	}
+
 }
 
 void FLAC__lpc_compute_lp_coefficients(const double autoc[], uint32_t *max_order, FLAC__real lp_coeff[][FLAC__MAX_LPC_ORDER], double error[])
@@ -900,7 +946,8 @@ uint32_t FLAC__lpc_max_prediction_before_shift_bps(uint32_t subframe_bps, const 
 	 * predictor is known however, so taking the log2 of the sum of the absolute values
 	 * of all coefficients is a more accurate representation of the predictor */
 	FLAC__int32 abs_sum_of_qlp_coeff = 0;
-	for(uint32_t i = 0; i < order; i++)
+	uint32_t i;
+	for(i = 0; i < order; i++)
 		abs_sum_of_qlp_coeff += abs(qlp_coeff[i]);
 	if(abs_sum_of_qlp_coeff == 0)
 		abs_sum_of_qlp_coeff = 1;
@@ -917,7 +964,7 @@ uint32_t FLAC__lpc_max_residual_bps(uint32_t subframe_bps, const FLAC__int32 * f
 		return predictor_sum_bps + 1;
 }
 
-#ifdef FUZZING_BUILD_MODE_NO_SANITIZE_SIGNED_INTEGER_OVERFLOW
+#if defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION) && !defined(FUZZING_BUILD_MODE_FLAC_SANITIZE_SIGNED_INTEGER_OVERFLOW)
 /* The attribute below is to silence the undefined sanitizer of oss-fuzz.
  * Because fuzzing feeds bogus predictors and residual samples to the
  * decoder, having overflows in this section is unavoidable. Also,
@@ -1440,7 +1487,7 @@ void FLAC__lpc_restore_signal_wide(const FLAC__int32 * flac_restrict residual, u
 }
 #endif
 
-#ifdef FUZZING_BUILD_MODE_NO_SANITIZE_SIGNED_INTEGER_OVERFLOW
+#if defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION) && !defined(FUZZING_BUILD_MODE_FLAC_SANITIZE_SIGNED_INTEGER_OVERFLOW)
 /* The attribute below is to silence the undefined sanitizer of oss-fuzz.
  * Because fuzzing feeds bogus predictors and residual samples to the
  * decoder, having overflows in this section is unavoidable. Also,
