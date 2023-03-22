@@ -55,7 +55,7 @@ FLAC_API const char *FLAC__VENDOR_STRING = "reference libFLAC git-" GIT_COMMIT_H
 #else
 /* PACKAGE_VERSION should come from configure */
 FLAC_API const char *FLAC__VERSION_STRING = PACKAGE_VERSION;
-FLAC_API const char *FLAC__VENDOR_STRING = "reference libFLAC " PACKAGE_VERSION " 20220220";
+FLAC_API const char *FLAC__VENDOR_STRING = "reference libFLAC " PACKAGE_VERSION " 20221022";
 #endif
 
 FLAC_API const FLAC__byte FLAC__STREAM_SYNC_STRING[4] = { 'f','L','a','C' };
@@ -522,6 +522,7 @@ FLAC_API FLAC__bool FLAC__format_picture_is_legal(const FLAC__StreamMetadata_Pic
 /*
  * These routines are private to libFLAC
  */
+#if 0 /* UNUSED */
 uint32_t FLAC__format_get_max_rice_partition_order(uint32_t blocksize, uint32_t predictor_order)
 {
 	return
@@ -531,6 +532,7 @@ uint32_t FLAC__format_get_max_rice_partition_order(uint32_t blocksize, uint32_t 
 			predictor_order
 		);
 }
+#endif
 
 uint32_t FLAC__format_get_max_rice_partition_order_from_blocksize(uint32_t blocksize)
 {
@@ -586,9 +588,7 @@ FLAC__bool FLAC__format_entropy_coding_method_partitioned_rice_contents_ensure_s
 {
 	FLAC__ASSERT(0 != object);
 
-	FLAC__ASSERT(object->capacity_by_order > 0 || (0 == object->parameters && 0 == object->raw_bits));
-
-	if(object->capacity_by_order < max_partition_order) {
+	if(object->capacity_by_order < max_partition_order || object->parameters == NULL || object->raw_bits == NULL) {
 		if(0 == (object->parameters = safe_realloc_(object->parameters, sizeof(uint32_t)*(1 << max_partition_order))))
 			return false;
 		if(0 == (object->raw_bits = safe_realloc_(object->raw_bits, sizeof(uint32_t)*(1 << max_partition_order))))
