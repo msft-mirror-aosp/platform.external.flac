@@ -43,24 +43,19 @@ EXTRA_DIST = \
 	flac-config.cmake.in \
 	cmake/CheckA64NEON.c.in \
 	cmake/CheckA64NEON.cmake \
-	cmake/CheckAttribute.c.in \
-	cmake/CheckAttribute.cmake \
 	cmake/CheckCPUArch.c.in \
 	cmake/CheckCPUArch.cmake \
-	cmake/CheckVSX.c.in \
-	cmake/CheckVSX.cmake \
 	cmake/FindOgg.cmake \
 	cmake/UseSystemExtensions.cmake \
+	CHANGELOG.md \
 	COPYING.FDL \
 	COPYING.GPL \
 	COPYING.LGPL \
 	COPYING.Xiph \
+	README.md \
 	autogen.sh \
 	config.rpath \
 	depcomp \
-	ltmain.sh \
-	strip_non_asm_libtool_args.sh
-
-DISTCHECK_CONFIGURE_FLAGS = '--disable-version-from-git'
+	ltmain.sh
 
 CLEANFILES = *~
