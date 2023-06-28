@@ -1,6 +1,6 @@
 /* metaflac - Command-line FLAC metadata editor
  * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2022  Xiph.Org Foundation
+ * Copyright (C) 2011-2023  Xiph.Org Foundation
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -419,5 +419,12 @@ FLAC__bool export_vc_to(const char *filename, FLAC__StreamMetadata *block, const
 
 	if(f != stdout)
 		fclose(f);
+
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+	/* Delete output file when fuzzing */
+	if(f != stdout)
+		flac_unlink(vc_filename->value);
+#endif
+
 	return ret;
 }
