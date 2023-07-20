@@ -1,6 +1,6 @@
 #  FLAC - Free Lossless Audio Codec
 #  Copyright (C) 2001-2009  Josh Coalson
-#  Copyright (C) 2011-2022  Xiph.Org Foundation
+#  Copyright (C) 2011-2023  Xiph.Org Foundation
 #
 #  This file is part the FLAC project.  FLAC is comprised of several
 #  components distributed under different licenses.  The codec libraries
@@ -20,7 +20,7 @@
 # instead of FLAC__ since autoconf triggers off 'AC_' in strings
 
 AC_PREREQ(2.60)
-AC_INIT([flac],[1.4.2],[flac-dev@xiph.org],[flac],[https://www.xiph.org/flac/])
+AC_INIT([flac],[1.4.3],[flac-dev@xiph.org],[flac],[https://www.xiph.org/flac/])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([src/flac/main.c])
 AC_CONFIG_MACRO_DIR([m4])
@@ -176,10 +176,12 @@ os_is_windows=no
 case "$host" in
 	*mingw*)
 		os_is_windows=yes
+		AC_CHECK_TOOL(RC,[windres],[:])
 		;;
 esac
 
 AM_CONDITIONAL(OS_IS_WINDOWS, test "x$os_is_windows" = xyes)
+AM_CONDITIONAL(HAVE_WINDRES, test "x$RC" != "x:")
 
 case "$host" in
 	*-linux-*)
@@ -265,12 +267,12 @@ esac
 
 
 AC_ARG_ENABLE(64-bit-words,
-	AS_HELP_STRING([--enable-64-bit-words],[Set FLAC__BYTES_PER_WORD to 8 (4 is the default)]))
-if test "x$enable_64_bit_words" = xyes ; then
-	AC_DEFINE_UNQUOTED([ENABLE_64_BIT_WORDS],1,[Set FLAC__BYTES_PER_WORD to 8 (4 is the default)])
+	AS_HELP_STRING([--disable-64-bit-words],[Set FLAC__BYTES_PER_WORD to 4 (8 is the default)]))
+if test "x$enable_64_bit_words" = xno ; then
+	AC_DEFINE_UNQUOTED([ENABLE_64_BIT_WORDS],0,[Set FLAC__BYTES_PER_WORD to 8 (this is the default)])
 else
-	AC_DEFINE_UNQUOTED([ENABLE_64_BIT_WORDS],0)
-	fi
+	AC_DEFINE_UNQUOTED([ENABLE_64_BIT_WORDS],1)
+fi
 AC_SUBST(ENABLE_64_BIT_WORDS)
 
 AC_ARG_ENABLE(valgrind-testing,
