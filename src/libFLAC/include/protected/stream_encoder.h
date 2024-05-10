@@ -1,6 +1,6 @@
 /* libFLAC - Free Lossless Audio Codec library
  * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2022  Xiph.Org Foundation
+ * Copyright (C) 2011-2023  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,7 @@ typedef enum {
 	FLAC__APODIZATION_TUKEY,
 	FLAC__APODIZATION_PARTIAL_TUKEY,
 	FLAC__APODIZATION_PUNCHOUT_TUKEY,
+	FLAC__APODIZATION_SUBDIVIDE_TUKEY,
 	FLAC__APODIZATION_WELCH
 } FLAC__ApodizationFunction;
 
@@ -78,6 +79,10 @@ typedef struct {
 			FLAC__real start;
 			FLAC__real end;
 		} multiple_tukey;
+		struct {
+			FLAC__real p;
+			FLAC__int32 parts;
+		} subdivide_tukey;
 	} parameters;
 } FLAC__ApodizationSpecification;
 

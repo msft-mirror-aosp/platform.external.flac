@@ -1,6 +1,6 @@
 #  FLAC - Free Lossless Audio Codec
 #  Copyright (C) 2002-2009  Josh Coalson
-#  Copyright (C) 2011-2022  Xiph.Org Foundation
+#  Copyright (C) 2011-2023  Xiph.Org Foundation
 #
 #  This file is part the FLAC project.  FLAC is comprised of several
 #  components distributed under different licenses.  The codec libraries
@@ -44,7 +44,6 @@ noinst_LTLIBRARIES = \
 if OS_IS_WINDOWS
 win_utf8_io_libwin_utf8_io_la_SOURCES =	win_utf8_io/win_utf8_io.c
 libwin_utf8_io = win_utf8_io/libwin_utf8_io.la
-win_utf8_io_libwin_utf8_io_la_LIBADD = $(top_builddir)/src/libFLAC/libFLAC.la -lm
 else
 win_utf8_io_libwin_utf8_io_la_SOURCES =
 libwin_utf8_io =

@@ -2,7 +2,7 @@
 
 #  FLAC - Free Lossless Audio Codec
 #  Copyright (C) 2001-2009  Josh Coalson
-#  Copyright (C) 2011-2022  Xiph.Org Foundation
+#  Copyright (C) 2011-2023  Xiph.Org Foundation
 #
 #  This file is part the FLAC project.  FLAC is comprised of several
 #  components distributed under different licenses.  The codec libraries
@@ -226,6 +226,15 @@ for disable in '' '--disable-verbatim-subframes --disable-constant-subframes' '-
 				test_file noise8m32 1 8 "-8 -p -e -l $lpc_order --lax --blocksize=$blocksize $disable"
 			fi
 		done
+	done
+done
+
+echo "Testing blocksize variations with subdivide apodization..."
+for blocksize in 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 ; do
+	for lpc_order in 0 1 2 3 4 5 7 8 9 15 16 17 31 32 ; do
+		if [ $lpc_order = 0 ] || [ $lpc_order -le $blocksize ] ; then
+			test_file noise8m32 1 8 "-8 -p -e -A \"subdivide_tukey(32)\" -l $lpc_order --lax --blocksize=$blocksize"
+		fi
 	done
 done
 

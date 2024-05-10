@@ -62,7 +62,7 @@ int iconvert(const char *fromcode, const char *tocode,
   char *ib;
   char *ob;
   char *utfbuf = 0, *outbuf, *newbuf;
-  size_t utflen, outlen, ibl, obl, k;
+  size_t utflen, outlen, ibl, obl, obp, k;
   char tbuf[2048];
 
   cd1 = iconv_open("UTF-8", fromcode);
@@ -124,11 +124,12 @@ int iconvert(const char *fromcode, const char *tocode,
       if(utflen*2 < utflen) /* overflow check */
 	goto fail;
       utflen *= 2;
+      obp = ob - utfbuf; /* save position */
       newbuf = realloc(utfbuf, utflen);
       if (!newbuf)
 	goto fail;
-      ob = (ob - utfbuf) + newbuf;
-      obl = utflen - (ob - newbuf);
+      ob = newbuf + obp;
+      obl = utflen - obp;
       utfbuf = newbuf;
     }
     else {
@@ -149,7 +150,7 @@ int iconvert(const char *fromcode, const char *tocode,
       iconv_close(cd1);
       return ret;
     }
-    newbuf = safe_realloc_add_2op_(utfbuf, (ob - utfbuf), /*+*/1);
+    newbuf = safe_realloc_nofree_add_2op_(utfbuf, (ob - utfbuf), /*+*/1);
     if (!newbuf)
       goto fail;
     ob = (ob - utfbuf) + newbuf;
@@ -161,6 +162,8 @@ int iconvert(const char *fromcode, const char *tocode,
 
   /* Truncate the buffer to be tidy */
   utflen = ob - utfbuf;
+  if (utflen == 0)
+    goto fail;
   newbuf = realloc(utfbuf, utflen);
   if (!newbuf)
     goto fail;
