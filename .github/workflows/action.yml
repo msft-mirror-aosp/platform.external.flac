@@ -3,37 +3,12 @@ name: GitHub Actions
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '0 0 1 * *'
 
 jobs:
   build:
     strategy:
       matrix:
-        name:
-          [
-            ubuntu-latest-gcc-autotools,
-            ubuntu-latest-clang-autotools,
-            ubuntu-latest-gcc-cmake,
-            ubuntu-latest-clang-cmake,
-            macos-latest-clang-autotools,
-            macos-latest-clang-cmake,
-            windows-latest-cmake,
-            ubuntu-latest-gcc-autotools-64-bit-words,
-            ubuntu-latest-clang-autotools-64-bit-words,
-            ubuntu-latest-gcc-cmake-64-bit-words,
-            ubuntu-latest-clang-cmake-64-bit-words,
-            macos-latest-clang-autotools-64-bit-words,
-            macos-latest-clang-cmake-64-bit-words
-          ]
         include:
-          - name: ubuntu-latest-gcc-autotools
-            os: ubuntu-latest
-            cc: gcc
-            cxx: g++
-            build-system: autotools
-            configure-opts: ''
-
           - name: ubuntu-latest-clang-autotools
             os: ubuntu-latest
             cc: clang
@@ -74,54 +49,17 @@ jobs:
             build-system: cmake
             configure-opts: ''
 
-          - name: ubuntu-latest-gcc-autotools-64-bit-words
-            os: ubuntu-latest
-            cc: gcc
-            cxx: g++
-            build-system: autotools
-            configure-opts: --enable-64-bit-words
-
-          - name: ubuntu-latest-clang-autotools-64-bit-words
-            os: ubuntu-latest
-            cc: clang
-            cxx: clang++
-            build-system: autotools
-            configure-opts: --enable-64-bit-words
-
-          - name: ubuntu-latest-gcc-cmake-64-bit-words
-            os: ubuntu-latest
-            cc: gcc
-            cxx: g++
+          - name: windows-latest-cmake-shared
+            os: windows-latest
             build-system: cmake
-            configure-opts: -DENABLE_64_BIT_WORDS=ON
-
-          - name: ubuntu-latest-clang-cmake-64-bit-words
-            os: ubuntu-latest
-            cc: clang
-            cxx: clang++
-            build-system: cmake
-            configure-opts: -DENABLE_64_BIT_WORDS=ON
-
-          - name: macos-latest-clang-autotools-64-bit-words
-            os: macos-latest
-            cc: clang
-            cxx: clang++
-            build-system: autotools
-            configure-opts: --enable-64-bit-words
-
-          - name: macos-latest-clang-cmake-64-bit-words
-            os: macos-latest
-            cc: clang
-            cxx: clang++
-            build-system: cmake
-            configure-opts: -DENABLE_64_BIT_WORDS=ON
+            configure-opts: '-DBUILD_SHARED_LIBS=ON'
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         if: startsWith(matrix.build-system,'cmake')
         with:
           repository: xiph/ogg
@@ -137,7 +75,7 @@ jobs:
         if: startsWith(matrix.os,'ubuntu')
         run: |
           sudo apt-get update
-          sudo apt-get install -y libtool-bin libogg-dev doxygen libxml2-utils w3c-sgml-lib
+          sudo apt-get install -y libtool-bin libogg-dev
 
       - name: Install Windows dependencies
         if: startsWith(matrix.os,'windows')
@@ -168,7 +106,7 @@ jobs:
           CC: ${{ matrix.cc }}
           CXX: ${{ matrix.cxx }}
         working-directory: cmake-build
-        run: cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON ${{ matrix.configure-opts }} -DCMAKE_FIND_FRAMEWORK=NEVER
+        run: cmake .. -DCMAKE_BUILD_TYPE=Release -DINSTALL_MANPAGES=OFF -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON ${{ matrix.configure-opts }} -DCMAKE_FIND_FRAMEWORK=NEVER
 
       - name: CMake build
         if: startsWith(matrix.build-system,'cmake')
@@ -191,4 +129,6 @@ jobs:
         if: failure()
         with:
           name: flac-${{ github.sha }}-${{ github.run_id }}-logs
-          path: ./**/*.log
+          path: |
+            ./**/*.log
+            ./**/out*.meta
