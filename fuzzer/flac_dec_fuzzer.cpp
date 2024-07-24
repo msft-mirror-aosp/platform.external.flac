@@ -18,19 +18,40 @@
  * Originally developed and contributed by Ittiam Systems Pvt. Ltd, Bangalore
  */
 
+#include <fuzzer/FuzzedDataProvider.h>
 #include <stdlib.h>
 #include <utils/String8.h>
 #include "FLAC/stream_decoder.h"
+
+constexpr FLAC__MetadataType kMetadataTypes[8] = {
+  FLAC__METADATA_TYPE_PICTURE,
+  FLAC__METADATA_TYPE_STREAMINFO,
+  FLAC__METADATA_TYPE_PADDING,
+  FLAC__METADATA_TYPE_APPLICATION,
+  FLAC__METADATA_TYPE_SEEKTABLE,
+  FLAC__METADATA_TYPE_VORBIS_COMMENT,
+  FLAC__METADATA_TYPE_CUESHEET,
+  FLAC__METADATA_TYPE_UNDEFINED,
+};
+
+const char *kMetadataIDs[3] = {
+  "aiff",
+  "riff",
+  "w64",
+};
 
 // First four bytes are always "fLaC" in ASCII format.
 #define FIRST_ENCODED_BYTE_OFFSET 4
 
 class Codec {
  public:
-  Codec() = default;
+  Codec(const uint8_t* data, size_t size) : mFdp(data, size) {
+    mBuffer = data;
+    mBufferLen = size;
+  };
   ~Codec() { deInitDecoder(); }
   bool initDecoder();
-  void decodeFrames(const uint8_t *data, size_t size);
+  void decodeFrames();
   void deInitDecoder();
 
  private:
@@ -43,6 +64,7 @@ class Codec {
                                                const FLAC__int32 *const buffer[]);
   void errorCallback(FLAC__StreamDecoderErrorStatus status);
   void metadataCallback(const FLAC__StreamMetadata *metadata);
+  FuzzedDataProvider mFdp;
 };
 
 bool Codec::initDecoder() {
@@ -70,7 +92,25 @@ bool Codec::initDecoder() {
     Codec *client = reinterpret_cast<Codec *>(client_data);
     client->errorCallback(status);
   };
-  FLAC__stream_decoder_set_metadata_respond(mDecoder, FLAC__METADATA_TYPE_STREAMINFO);
+
+  if (mFdp.ConsumeBool()) {
+    FLAC__stream_decoder_set_metadata_ignore(mDecoder, mFdp.PickValueInArray(kMetadataTypes));
+  }
+  if (mFdp.ConsumeBool()) {
+    FLAC__stream_decoder_skip_single_frame(mDecoder);
+  }
+
+  if (mFdp.ConsumeBool()) {
+    FLAC__MetadataType metadataType = mFdp.PickValueInArray(kMetadataTypes);
+    FLAC__stream_decoder_set_metadata_respond(mDecoder, metadataType);
+  }
+  else {
+    FLAC__byte* metadataIgnoreID = (FLAC__byte*)mFdp.PickValueInArray(kMetadataIDs);
+    FLAC__byte* metadataRespondID = (FLAC__byte*)mFdp.PickValueInArray(kMetadataIDs);
+    FLAC__stream_decoder_set_metadata_ignore_application(mDecoder, metadataIgnoreID);
+    FLAC__stream_decoder_set_metadata_respond_application(mDecoder, metadataRespondID);
+  }
+
   static auto metadata_callback = [](const FLAC__StreamDecoder *,
                                      const FLAC__StreamMetadata *metadata, void *client_data) {
     Codec *client = reinterpret_cast<Codec *>(client_data);
@@ -82,6 +122,12 @@ bool Codec::initDecoder() {
       metadata_callback, error_callback, client_data);
   if (initStatus != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
     return false;
+  }
+  if (mFdp.ConsumeBool()) {
+    FLAC__stream_decoder_set_metadata_respond_all(mDecoder);
+  }
+  if (mFdp.ConsumeBool()) {
+    FLAC__stream_decoder_seek_absolute(mDecoder, (FLAC__uint64)mFdp.ConsumeIntegral<uint64_t>());
   }
   return true;
 }
@@ -119,16 +165,12 @@ void Codec::metadataCallback(const FLAC__StreamMetadata *metadata) {
   return;
 }
 
-void Codec::decodeFrames(const uint8_t *data, size_t size) {
-  mBuffer = data;
-  mBufferLen = size;
-  size_t ofst = std::min((size_t)FIRST_ENCODED_BYTE_OFFSET, size - 1);
-  bool decodeEntireStream = data[ofst] & 0x01;
-  if (!decodeEntireStream) {
+void Codec::decodeFrames() {
+  if (mFdp.ConsumeBool()) {
     if (!FLAC__stream_decoder_process_until_end_of_metadata(mDecoder)) {
       return;
     }
-    while (mBufferPos <= size) {
+    while(mBufferPos <= mBufferLen) {
       FLAC__stream_decoder_process_single(mDecoder);
       if (FLAC__STREAM_DECODER_END_OF_STREAM == FLAC__stream_decoder_get_state(mDecoder)) {
         return;
@@ -150,13 +192,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   if (size == 0) {
     return 0;
   }
-  Codec *codec = new Codec();
-  if (!codec) {
-    return 0;
-  }
+  auto codec = std::make_unique<Codec>(data, size);
   if (codec->initDecoder()) {
-    codec->decodeFrames(data, size);
+    codec->decodeFrames();
   }
-  delete codec;
   return 0;
 }
